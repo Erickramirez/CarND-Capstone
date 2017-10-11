@@ -8,12 +8,9 @@ from flask import Flask, render_template
 
 from bridge import Bridge
 from conf import conf
-import sys
-sys.excepthook = lambda *args: None
 
 sio = socketio.Server()
 app = Flask(__name__)
-bridge = Bridge(conf)
 msgs = []
 
 dbw_enable = False
@@ -27,7 +24,7 @@ def send(topic, data):
     msgs.append((topic, data))
     #sio.emit(topic, data=json.dumps(data), skip_sid=True)
 
-bridge.register_server(send)
+bridge = Bridge(conf, send)
 
 @sio.on('telemetry')
 def telemetry(sid, data):
